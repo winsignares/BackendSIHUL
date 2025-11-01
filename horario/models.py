@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import F, CheckConstraint, ExpressionWrapper, BooleanField, Index
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models import Q
 
 # Create your models here.
 
@@ -134,12 +135,16 @@ class Horario(models.Model):
 
     class Meta:
         constraints = [
-            CheckConstraint(check=ExpressionWrapper(F('hora_fin') > F('hora_inicio'), output_field=BooleanField()), name='chk_horario_horas'),
+            CheckConstraint(
+                check=Q(hora_fin__gt=F('hora_inicio')),
+                name='chk_horario_horas',
+            ),
         ]
         indexes = [
             Index(fields=['espacio'], name='idx_horario_espacio'),
             Index(fields=['docente'], name='idx_horario_docente'),
         ]
+
 
     def __str__(self):
         return f"{self.dia_semana} {self.hora_inicio}-{self.hora_fin}"
@@ -160,8 +165,12 @@ class HorarioFusionado(models.Model):
 
     class Meta:
         constraints = [
-            CheckConstraint(check=ExpressionWrapper(F('hora_fin') > F('hora_inicio'), output_field=BooleanField()), name='chk_horario_fusionado_horas'),
+            CheckConstraint(
+                check=Q(hora_fin__gt=F('hora_inicio')),
+                name='chk_horario_fusionado_horas',
+            ),
         ]
+
 
     def __str__(self):
         return f"Fusionado {self.asignatura} {self.dia_semana}"
@@ -186,11 +195,15 @@ class PrestamoEspacio(models.Model):
 
     class Meta:
         constraints = [
-            CheckConstraint(check=ExpressionWrapper(F('hora_fin') > F('hora_inicio'), output_field=BooleanField()), name='chk_prestamo_horas'),
+            CheckConstraint(
+                check=Q(hora_fin__gt=F('hora_inicio')),
+                name='chk_prestamo_horas',
+            ),
         ]
         indexes = [
             Index(fields=['espacio', 'fecha'], name='idx_prestamo_espacio_fecha'),
         ]
+
 
     def __str__(self):
         return f"{self.espacio} - {self.fecha}"
