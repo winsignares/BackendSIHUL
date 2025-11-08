@@ -24,6 +24,66 @@ def create_rol(request):
             return JsonResponse({"error": "El cuerpo de la solicitud no es un JSON válido."}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+        
+@csrf_exempt
+def update_rol(request):
+    if request.method == 'PUT':
+        try:
+            data = json.loads(request.body)
+            id = data.get('id')
+            nombre = data.get('nombre')
+            descripcion = data.get('descripcion')
+            if not id or not nombre or not descripcion:
+                return JsonResponse({"error": "ID, nombre y descripción son requeridos"}, status=400)
+            rol_existente = Rol.objects.get(id=id)
+            rol_existente.nombre = nombre
+            rol_existente.descripcion = descripcion
+            rol_existente.save()
+            return JsonResponse({"message": "Rol actualizado", "id": rol_existente.id}, status=200)
+        
+        except Rol.DoesNotExist:
+            return JsonResponse({"error": "El rol con el ID proporcionado no existe."}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "El cuerpo de la solicitud no es un JSON válido."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def delete_rol(request):
+    if request.method == 'DELETE':
+        try:
+            data = json.loads(request.body)
+            id = data.get('id')
+            if not id:
+                return JsonResponse({"error": "El ID es requerido"}, status=400)
+            rol_existente = Rol.objects.get(id=id)
+            rol_existente.delete()
+            return JsonResponse({"message": "Rol eliminado"}, status=200)
+        except Rol.DoesNotExist:
+            return JsonResponse({"error": "El rol con el ID proporcionado no existe."}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "El cuerpo de la solicitud no es un JSON válido."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def get_rol(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        rol_existente = Rol.objects.get(id=id)
+        return JsonResponse({"id": rol_existente.id, "nombre": rol_existente.nombre, "descripcion": rol_existente.descripcion}, status=200)
+    except Rol.DoesNotExist:
+        return JsonResponse({"error": "El rol con el ID proporcionado no existe."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+def list_roles(request):
+    if request.method == 'GET':
+        roles = Rol.objects.all()
+        roles_list = [{"id": rol.id, "nombre": rol.nombre, "descripcion": rol.descripcion} for rol in roles]
+        return JsonResponse({"roles": roles_list}, status=200)
 
 # ---------- Sede CRUD ----------
 @csrf_exempt
@@ -90,21 +150,18 @@ def delete_sede(request):
 
 
 @csrf_exempt
-def get_sede(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            sede = Sede.objects.get(id=id)
-            return JsonResponse({"id": sede.id, "nombre": sede.nombre, "direccion": sede.direccion, "ciudad": sede.ciudad, "activa": sede.activa}, status=200)
-        except Sede.DoesNotExist:
-            return JsonResponse({"error": "Sede no encontrada."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_sede(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        sede = Sede.objects.get(id=id)
+        return JsonResponse({"id": sede.id, "nombre": sede.nombre, "direccion": sede.direccion, "ciudad": sede.ciudad, "activa": sede.activa}, status=200)
+    except Sede.DoesNotExist:
+        return JsonResponse({"error": "Sede no encontrada."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_sedes(request):
     if request.method == 'GET':
         sedes = Sede.objects.all()
@@ -173,21 +230,18 @@ def delete_facultad(request):
 
 
 @csrf_exempt
-def get_facultad(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            f = Facultad.objects.get(id=id)
-            return JsonResponse({"id": f.id, "nombre": f.nombre, "activa": f.activa}, status=200)
-        except Facultad.DoesNotExist:
-            return JsonResponse({"error": "Facultad no encontrada."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_facultad(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        f = Facultad.objects.get(id=id)
+        return JsonResponse({"id": f.id, "nombre": f.nombre, "activa": f.activa}, status=200)
+    except Facultad.DoesNotExist:
+        return JsonResponse({"error": "Facultad no encontrada."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_facultades(request):
     if request.method == 'GET':
         items = Facultad.objects.all()
@@ -265,21 +319,18 @@ def delete_programa(request):
 
 
 @csrf_exempt
-def get_programa(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            p = Programa.objects.get(id=id)
-            return JsonResponse({"id": p.id, "nombre": p.nombre, "facultad": p.facultad.id, "activo": p.activo}, status=200)
-        except Programa.DoesNotExist:
-            return JsonResponse({"error": "Programa no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_programa(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        p = Programa.objects.get(id=id)
+        return JsonResponse({"id": p.id, "nombre": p.nombre, "facultad": p.facultad.id, "activo": p.activo}, status=200)
+    except Programa.DoesNotExist:
+        return JsonResponse({"error": "Programa no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_programas(request):
     if request.method == 'GET':
         items = Programa.objects.all()
@@ -361,21 +412,18 @@ def delete_periodo(request):
 
 
 @csrf_exempt
-def get_periodo(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            p = PeriodoAcademico.objects.get(id=id)
-            return JsonResponse({"id": p.id, "nombre": p.nombre, "fecha_inicio": str(p.fecha_inicio), "fecha_fin": str(p.fecha_fin), "activo": p.activo}, status=200)
-        except PeriodoAcademico.DoesNotExist:
-            return JsonResponse({"error": "Periodo no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_periodo(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        p = PeriodoAcademico.objects.get(id=id)
+        return JsonResponse({"id": p.id, "nombre": p.nombre, "fecha_inicio": str(p.fecha_inicio), "fecha_fin": str(p.fecha_fin), "activo": p.activo}, status=200)
+    except PeriodoAcademico.DoesNotExist:
+        return JsonResponse({"error": "Periodo no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_periodos(request):
     if request.method == 'GET':
         items = PeriodoAcademico.objects.all()
@@ -464,21 +512,18 @@ def delete_grupo(request):
 
 
 @csrf_exempt
-def get_grupo(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            g = Grupo.objects.get(id=id)
-            return JsonResponse({"id": g.id, "nombre": g.nombre, "programa_id": g.programa.id, "periodo_id": g.periodo.id, "semestre": g.semestre, "activo": g.activo}, status=200)
-        except Grupo.DoesNotExist:
-            return JsonResponse({"error": "Grupo no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_grupo(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        g = Grupo.objects.get(id=id)
+        return JsonResponse({"id": g.id, "nombre": g.nombre, "programa_id": g.programa.id, "periodo_id": g.periodo.id, "semestre": g.semestre, "activo": g.activo}, status=200)
+    except Grupo.DoesNotExist:
+        return JsonResponse({"error": "Grupo no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_grupos(request):
     if request.method == 'GET':
         items = Grupo.objects.all()
@@ -555,21 +600,18 @@ def delete_asignatura(request):
 
 
 @csrf_exempt
-def get_asignatura(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            a = Asignatura.objects.get(id=id)
-            return JsonResponse({"id": a.id, "nombre": a.nombre, "codigo": a.codigo, "creditos": a.creditos}, status=200)
-        except Asignatura.DoesNotExist:
-            return JsonResponse({"error": "Asignatura no encontrada."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_asignatura(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        a = Asignatura.objects.get(id=id)
+        return JsonResponse({"id": a.id, "nombre": a.nombre, "codigo": a.codigo, "creditos": a.creditos}, status=200)
+    except Asignatura.DoesNotExist:
+        return JsonResponse({"error": "Asignatura no encontrada."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_asignaturas(request):
     if request.method == 'GET':
         items = Asignatura.objects.all()
@@ -660,21 +702,18 @@ def delete_espacio(request):
 
 
 @csrf_exempt
-def get_espacio(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            e = EspacioFisico.objects.get(id=id)
-            return JsonResponse({"id": e.id, "sede_id": e.sede.id, "tipo": e.tipo, "capacidad": e.capacidad, "ubicacion": e.ubicacion, "recursos": e.recursos, "disponible": e.disponible}, status=200)
-        except EspacioFisico.DoesNotExist:
-            return JsonResponse({"error": "Espacio no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_espacio(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        e = EspacioFisico.objects.get(id=id)
+        return JsonResponse({"id": e.id, "sede_id": e.sede.id, "tipo": e.tipo, "capacidad": e.capacidad, "ubicacion": e.ubicacion, "recursos": e.recursos, "disponible": e.disponible}, status=200)
+    except EspacioFisico.DoesNotExist:
+        return JsonResponse({"error": "Espacio no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_espacios(request):
     if request.method == 'GET':
         items = EspacioFisico.objects.all()
@@ -742,21 +781,18 @@ def delete_recurso(request):
 
 
 @csrf_exempt
-def get_recurso(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            r = Recurso.objects.get(id=id)
-            return JsonResponse({"id": r.id, "nombre": r.nombre, "descripcion": r.descripcion}, status=200)
-        except Recurso.DoesNotExist:
-            return JsonResponse({"error": "Recurso no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_recurso(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        r = Recurso.objects.get(id=id)
+        return JsonResponse({"id": r.id, "nombre": r.nombre, "descripcion": r.descripcion}, status=200)
+    except Recurso.DoesNotExist:
+        return JsonResponse({"error": "Recurso no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_recursos(request):
     if request.method == 'GET':
         items = Recurso.objects.all()
@@ -833,249 +869,234 @@ def delete_espacio_recurso(request):
 
 
 @csrf_exempt
-def get_espacio_recurso(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            espacio_id = data.get('espacio_id')
-            recurso_id = data.get('recurso_id')
-            if not espacio_id or not recurso_id:
-                return JsonResponse({"error": "espacio_id y recurso_id son requeridos"}, status=400)
-            er = EspacioRecurso.objects.get(espacio_id=espacio_id, recurso_id=recurso_id)
-            return JsonResponse({"espacio_id": er.espacio.id, "recurso_id": er.recurso.id, "disponible": er.disponible}, status=200)
-        except EspacioRecurso.DoesNotExist:
-            return JsonResponse({"error": "Relación Espacio-Recurso no encontrada."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_espacio_recurso(request, espacio_id=None, recurso_id=None):
+    if espacio_id is None or recurso_id is None:
+        return JsonResponse({"error": "espacio_id y recurso_id son requeridos en la URL"}, status=400)
+    try:
+        er = EspacioRecurso.objects.get(espacio_id=espacio_id, recurso_id=recurso_id)
+        return JsonResponse({"espacio_id": er.espacio.id, "recurso_id": er.recurso.id, "disponible": er.disponible}, status=200)
+    except EspacioRecurso.DoesNotExist:
+        return JsonResponse({"error": "Relación Espacio-Recurso no encontrada."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_espacio_recursos(request):
     if request.method == 'GET':
         items = EspacioRecurso.objects.all()
         lst = [{"espacio_id": i.espacio.id, "recurso_id": i.recurso.id, "disponible": i.disponible} for i in items]
         return JsonResponse({"espacio_recursos": lst}, status=200)
 
-
 # ---------- Usuario CRUD ----------
 @csrf_exempt
 def create_usuario(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            nombre = data.get('nombre')
-            correo = data.get('correo')
-            contrasena = data.get('contrasena') or data.get('contrasena_hash')
-            rol_id = data.get('rol_id')
-            activo = data.get('activo', True)
-            if not nombre or not correo or not contrasena:
-                return JsonResponse({"error": "nombre, correo y contrasena son requeridos"}, status=400)
-            rol = None
-            if rol_id:
-                rol = Rol.objects.get(id=rol_id)
-            u = Usuario(nombre=nombre, correo=correo, contrasena_hash=contrasena, rol=rol, activo=bool(activo))
-            u.save()
-            return JsonResponse({"message": "Usuario creado", "id": u.id}, status=201)
-        except Rol.DoesNotExist:
-            return JsonResponse({"error": "Rol no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        nombre = data.get('nombre')
+        correo = data.get('correo')
+        contrasena = data.get('contrasena') or data.get('contrasena_hash')
+        rol_id = data.get('rol_id')
+        activo = data.get('activo', True)
+        if not nombre or not correo or not contrasena:
+            return JsonResponse({"error": "nombre, correo y contrasena son requeridos"}, status=400)
+        rol = None
+        if rol_id:
+            rol = Rol.objects.get(id=rol_id)
+        u = Usuario(nombre=nombre, correo=correo, contrasena_hash=contrasena, rol=rol, activo=bool(activo))
+        u.save()
+        return JsonResponse({"message": "Usuario creado", "id": u.id}, status=201)
+    except Rol.DoesNotExist:
+        return JsonResponse({"error": "Rol no encontrado."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def update_usuario(request):
-    if request.method == 'PUT':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            u = Usuario.objects.get(id=id)
-            if 'nombre' in data:
-                u.nombre = data.get('nombre')
-            if 'correo' in data:
-                u.correo = data.get('correo')
-            if 'contrasena' in data or 'contrasena_hash' in data:
-                u.contrasena_hash = data.get('contrasena') or data.get('contrasena_hash')
-            if 'rol_id' in data:
-                u.rol = Rol.objects.get(id=data.get('rol_id'))
-            if 'activo' in data:
-                u.activo = bool(data.get('activo'))
-            u.save()
-            return JsonResponse({"message": "Usuario actualizado", "id": u.id}, status=200)
-        except Usuario.DoesNotExist:
-            return JsonResponse({"error": "Usuario no encontrado."}, status=404)
-        except Rol.DoesNotExist:
-            return JsonResponse({"error": "Rol no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        u = Usuario.objects.get(id=id)
+        if 'nombre' in data:
+            u.nombre = data.get('nombre')
+        if 'correo' in data:
+            u.correo = data.get('correo')
+        if 'contrasena' in data or 'contrasena_hash' in data:
+            u.contrasena_hash = data.get('contrasena') or data.get('contrasena_hash')
+        if 'rol_id' in data:
+            u.rol = Rol.objects.get(id=data.get('rol_id')) if data.get('rol_id') else None
+        if 'activo' in data:
+            u.activo = bool(data.get('activo'))
+        u.save()
+        return JsonResponse({"message": "Usuario actualizado", "id": u.id}, status=200)
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
+    except Rol.DoesNotExist:
+        return JsonResponse({"error": "Rol no encontrado."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def delete_usuario(request):
-    if request.method == 'DELETE':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            u = Usuario.objects.get(id=id)
-            u.delete()
-            return JsonResponse({"message": "Usuario eliminado"}, status=200)
-        except Usuario.DoesNotExist:
-            return JsonResponse({"error": "Usuario no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'DELETE':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        u = Usuario.objects.get(id=id)
+        u.delete()
+        return JsonResponse({"message": "Usuario eliminado"}, status=200)
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
-def get_usuario(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            u = Usuario.objects.get(id=id)
-            return JsonResponse({"id": u.id, "nombre": u.nombre, "correo": u.correo, "rol_id": (u.rol.id if u.rol else None), "activo": u.activo}, status=200)
-        except Usuario.DoesNotExist:
-            return JsonResponse({"error": "Usuario no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
+def get_usuario(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        u = Usuario.objects.get(id=id)
+        return JsonResponse({"id": u.id, "nombre": u.nombre, "correo": u.correo, "rol_id": (u.rol.id if u.rol else None), "activo": u.activo}, status=200)
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
+@csrf_exempt
 def list_usuarios(request):
     if request.method == 'GET':
         items = Usuario.objects.all()
         lst = [{"id": i.id, "nombre": i.nombre, "correo": i.correo, "rol_id": (i.rol.id if i.rol else None), "activo": i.activo} for i in items]
         return JsonResponse({"usuarios": lst}, status=200)
 
-
 # ---------- Horario CRUD ----------
 @csrf_exempt
 def create_horario(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            grupo_id = data.get('grupo_id')
-            asignatura_id = data.get('asignatura_id')
-            docente_id = data.get('docente_id')
-            espacio_id = data.get('espacio_id')
-            dia_semana = data.get('dia_semana')
-            hora_inicio = data.get('hora_inicio')
-            hora_fin = data.get('hora_fin')
-            cantidad = data.get('cantidad_estudiantes')
-            if not grupo_id or not asignatura_id or not espacio_id or not dia_semana or not hora_inicio or not hora_fin:
-                return JsonResponse({"error": "Faltan campos requeridos"}, status=400)
-            grupo = Grupo.objects.get(id=grupo_id)
-            asignatura = Asignatura.objects.get(id=asignatura_id)
-            espacio = EspacioFisico.objects.get(id=espacio_id)
-            docente = None
-            if docente_id:
-                docente = Usuario.objects.get(id=docente_id)
-            hi = datetime.time.fromisoformat(hora_inicio)
-            hf = datetime.time.fromisoformat(hora_fin)
-            h = Horario(grupo=grupo, asignatura=asignatura, docente=docente, espacio=espacio, dia_semana=dia_semana, hora_inicio=hi, hora_fin=hf, cantidad_estudiantes=(int(cantidad) if cantidad is not None else None))
-            h.save()
-            return JsonResponse({"message": "Horario creado", "id": h.id}, status=201)
-        except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
-            return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
-        except ValueError:
-            return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        grupo_id = data.get('grupo_id')
+        asignatura_id = data.get('asignatura_id')
+        espacio_id = data.get('espacio_id')
+        dia_semana = data.get('dia_semana')
+        hora_inicio = data.get('hora_inicio')
+        hora_fin = data.get('hora_fin')
+        docente_id = data.get('docente_id')
+        cantidad = data.get('cantidad_estudiantes')
+        if not grupo_id or not asignatura_id or not espacio_id or not dia_semana or not hora_inicio or not hora_fin:
+            return JsonResponse({"error": "Faltan campos requeridos"}, status=400)
+        grupo = Grupo.objects.get(id=grupo_id)
+        asignatura = Asignatura.objects.get(id=asignatura_id)
+        espacio = EspacioFisico.objects.get(id=espacio_id)
+        docente = Usuario.objects.get(id=docente_id) if docente_id else None
+        hi = datetime.time.fromisoformat(hora_inicio)
+        hf = datetime.time.fromisoformat(hora_fin)
+        h = Horario(grupo=grupo, asignatura=asignatura, docente=docente, espacio=espacio, dia_semana=dia_semana, hora_inicio=hi, hora_fin=hf, cantidad_estudiantes=(int(cantidad) if cantidad is not None else None))
+        h.save()
+        return JsonResponse({"message": "Horario creado", "id": h.id}, status=201)
+    except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
+        return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def update_horario(request):
-    if request.method == 'PUT':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            h = Horario.objects.get(id=id)
-            if 'grupo_id' in data:
-                h.grupo = Grupo.objects.get(id=data.get('grupo_id'))
-            if 'asignatura_id' in data:
-                h.asignatura = Asignatura.objects.get(id=data.get('asignatura_id'))
-            if 'docente_id' in data:
-                h.docente = Usuario.objects.get(id=data.get('docente_id'))
-            if 'espacio_id' in data:
-                h.espacio = EspacioFisico.objects.get(id=data.get('espacio_id'))
-            if 'dia_semana' in data:
-                h.dia_semana = data.get('dia_semana')
-            if 'hora_inicio' in data:
-                h.hora_inicio = datetime.time.fromisoformat(data.get('hora_inicio'))
-            if 'hora_fin' in data:
-                h.hora_fin = datetime.time.fromisoformat(data.get('hora_fin'))
-            if 'cantidad_estudiantes' in data:
-                h.cantidad_estudiantes = int(data.get('cantidad_estudiantes')) if data.get('cantidad_estudiantes') is not None else None
-            h.save()
-            return JsonResponse({"message": "Horario actualizado", "id": h.id}, status=200)
-        except Horario.DoesNotExist:
-            return JsonResponse({"error": "Horario no encontrado."}, status=404)
-        except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
-            return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
-        except ValueError:
-            return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        h = Horario.objects.get(id=id)
+        if 'grupo_id' in data:
+            h.grupo = Grupo.objects.get(id=data.get('grupo_id'))
+        if 'asignatura_id' in data:
+            h.asignatura = Asignatura.objects.get(id=data.get('asignatura_id'))
+        if 'docente_id' in data:
+            h.docente = Usuario.objects.get(id=data.get('docente_id')) if data.get('docente_id') else None
+        if 'espacio_id' in data:
+            h.espacio = EspacioFisico.objects.get(id=data.get('espacio_id'))
+        if 'dia_semana' in data:
+            h.dia_semana = data.get('dia_semana')
+        if 'hora_inicio' in data:
+            h.hora_inicio = datetime.time.fromisoformat(data.get('hora_inicio'))
+        if 'hora_fin' in data:
+            h.hora_fin = datetime.time.fromisoformat(data.get('hora_fin'))
+        if 'cantidad_estudiantes' in data:
+            h.cantidad_estudiantes = int(data.get('cantidad_estudiantes')) if data.get('cantidad_estudiantes') is not None else None
+        h.save()
+        return JsonResponse({"message": "Horario actualizado", "id": h.id}, status=200)
+    except Horario.DoesNotExist:
+        return JsonResponse({"error": "Horario no encontrado."}, status=404)
+    except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
+        return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def delete_horario(request):
-    if request.method == 'DELETE':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            h = Horario.objects.get(id=id)
-            h.delete()
-            return JsonResponse({"message": "Horario eliminado"}, status=200)
-        except Horario.DoesNotExist:
-            return JsonResponse({"error": "Horario no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-
+    if request.method != 'DELETE':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        h = Horario.objects.get(id=id)
+        h.delete()
+        return JsonResponse({"message": "Horario eliminado"}, status=200)
+    except Horario.DoesNotExist:
+        return JsonResponse({"error": "Horario no encontrado."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+ 
 @csrf_exempt
-def get_horario(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            h = Horario.objects.get(id=id)
-            return JsonResponse({
-                "id": h.id,
-                "grupo_id": h.grupo.id,
-                "asignatura_id": h.asignatura.id,
-                "docente_id": (h.docente.id if h.docente else None),
-                "espacio_id": h.espacio.id,
-                "dia_semana": h.dia_semana,
-                "hora_inicio": str(h.hora_inicio),
-                "hora_fin": str(h.hora_fin),
-                "cantidad_estudiantes": h.cantidad_estudiantes
-            }, status=200)
-        except Horario.DoesNotExist:
-            return JsonResponse({"error": "Horario no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-
+def get_horario(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        h = Horario.objects.get(id=id)
+        return JsonResponse({
+            "id": h.id,
+            "grupo_id": h.grupo.id,
+            "asignatura_id": h.asignatura.id,
+            "docente_id": (h.docente.id if h.docente else None),
+            "espacio_id": h.espacio.id,
+            "dia_semana": h.dia_semana,
+            "hora_inicio": str(h.hora_inicio),
+            "hora_fin": str(h.hora_fin),
+            "cantidad_estudiantes": h.cantidad_estudiantes
+        }, status=200)
+    except Horario.DoesNotExist:
+        return JsonResponse({"error": "Horario no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 def list_horarios(request):
     if request.method == 'GET':
@@ -1093,141 +1114,134 @@ def list_horarios(request):
         } for i in items]
         return JsonResponse({"horarios": lst}, status=200)
 
-
-# ---------- HorarioFusionado CRUD ----------
+# ---------- Horario_Fusionado CRUD ----------
 @csrf_exempt
 def create_horario_fusionado(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            grupo1_id = data.get('grupo1_id')
-            grupo2_id = data.get('grupo2_id')
-            grupo3_id = data.get('grupo3_id')
-            asignatura_id = data.get('asignatura_id')
-            docente_id = data.get('docente_id')
-            espacio_id = data.get('espacio_id')
-            dia_semana = data.get('dia_semana')
-            hora_inicio = data.get('hora_inicio')
-            hora_fin = data.get('hora_fin')
-            cantidad = data.get('cantidad_estudiantes')
-            comentario = data.get('comentario')
-            if not grupo1_id or not grupo2_id or not asignatura_id or not espacio_id or not dia_semana or not hora_inicio or not hora_fin:
-                return JsonResponse({"error": "Faltan campos requeridos"}, status=400)
-            grupo1 = Grupo.objects.get(id=grupo1_id)
-            grupo2 = Grupo.objects.get(id=grupo2_id)
-            grupo3 = Grupo.objects.get(id=grupo3_id) if grupo3_id else None
-            asignatura = Asignatura.objects.get(id=asignatura_id)
-            espacio = EspacioFisico.objects.get(id=espacio_id)
-            docente = None
-            if docente_id:
-                docente = Usuario.objects.get(id=docente_id)
-            hi = datetime.time.fromisoformat(hora_inicio)
-            hf = datetime.time.fromisoformat(hora_fin)
-            hfus = HorarioFusionado(grupo1=grupo1, grupo2=grupo2, grupo3=grupo3, asignatura=asignatura, docente=docente, espacio=espacio, dia_semana=dia_semana, hora_inicio=hi, hora_fin=hf, cantidad_estudiantes=(int(cantidad) if cantidad is not None else None), comentario=comentario)
-            hfus.save()
-            return JsonResponse({"message": "Horario fusionado creado", "id": hfus.id}, status=201)
-        except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
-            return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
-        except ValueError:
-            return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        grupo1_id = data.get('grupo1_id')
+        grupo2_id = data.get('grupo2_id')
+        grupo3_id = data.get('grupo3_id')
+        asignatura_id = data.get('asignatura_id')
+        espacio_id = data.get('espacio_id')
+        dia_semana = data.get('dia_semana')
+        hora_inicio = data.get('hora_inicio')
+        hora_fin = data.get('hora_fin')
+        docente_id = data.get('docente_id')
+        cantidad = data.get('cantidad_estudiantes')
+        comentario = data.get('comentario')
+        if not grupo1_id or not grupo2_id or not asignatura_id or not espacio_id or not dia_semana or not hora_inicio or not hora_fin:
+            return JsonResponse({"error": "Faltan campos requeridos"}, status=400)
+        grupo1 = Grupo.objects.get(id=grupo1_id)
+        grupo2 = Grupo.objects.get(id=grupo2_id)
+        grupo3 = Grupo.objects.get(id=grupo3_id) if grupo3_id else None
+        asignatura = Asignatura.objects.get(id=asignatura_id)
+        espacio = EspacioFisico.objects.get(id=espacio_id)
+        docente = Usuario.objects.get(id=docente_id) if docente_id else None
+        hi = datetime.time.fromisoformat(hora_inicio)
+        hf = datetime.time.fromisoformat(hora_fin)
+        hfus = HorarioFusionado(grupo1=grupo1, grupo2=grupo2, grupo3=grupo3, asignatura=asignatura, docente=docente, espacio=espacio, dia_semana=dia_semana, hora_inicio=hi, hora_fin=hf, cantidad_estudiantes=(int(cantidad) if cantidad is not None else None), comentario=comentario)
+        hfus.save()
+        return JsonResponse({"message": "Horario fusionado creado", "id": hfus.id}, status=201)
+    except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
+        return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def update_horario_fusionado(request):
-    if request.method == 'PUT':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            h = HorarioFusionado.objects.get(id=id)
-            if 'grupo1_id' in data:
-                h.grupo1 = Grupo.objects.get(id=data.get('grupo1_id'))
-            if 'grupo2_id' in data:
-                h.grupo2 = Grupo.objects.get(id=data.get('grupo2_id'))
-            if 'grupo3_id' in data:
-                h.grupo3 = Grupo.objects.get(id=data.get('grupo3_id')) if data.get('grupo3_id') else None
-            if 'asignatura_id' in data:
-                h.asignatura = Asignatura.objects.get(id=data.get('asignatura_id'))
-            if 'docente_id' in data:
-                h.docente = Usuario.objects.get(id=data.get('docente_id'))
-            if 'espacio_id' in data:
-                h.espacio = EspacioFisico.objects.get(id=data.get('espacio_id'))
-            if 'dia_semana' in data:
-                h.dia_semana = data.get('dia_semana')
-            if 'hora_inicio' in data:
-                h.hora_inicio = datetime.time.fromisoformat(data.get('hora_inicio'))
-            if 'hora_fin' in data:
-                h.hora_fin = datetime.time.fromisoformat(data.get('hora_fin'))
-            if 'cantidad_estudiantes' in data:
-                h.cantidad_estudiantes = int(data.get('cantidad_estudiantes')) if data.get('cantidad_estudiantes') is not None else None
-            if 'comentario' in data:
-                h.comentario = data.get('comentario')
-            h.save()
-            return JsonResponse({"message": "Horario fusionado actualizado", "id": h.id}, status=200)
-        except HorarioFusionado.DoesNotExist:
-            return JsonResponse({"error": "Horario fusionado no encontrado."}, status=404)
-        except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
-            return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
-        except ValueError:
-            return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        h = HorarioFusionado.objects.get(id=id)
+        if 'grupo1_id' in data:
+            h.grupo1 = Grupo.objects.get(id=data.get('grupo1_id'))
+        if 'grupo2_id' in data:
+            h.grupo2 = Grupo.objects.get(id=data.get('grupo2_id'))
+        if 'grupo3_id' in data:
+            h.grupo3 = Grupo.objects.get(id=data.get('grupo3_id')) if data.get('grupo3_id') else None
+        if 'asignatura_id' in data:
+            h.asignatura = Asignatura.objects.get(id=data.get('asignatura_id'))
+        if 'docente_id' in data:
+            h.docente = Usuario.objects.get(id=data.get('docente_id')) if data.get('docente_id') else None
+        if 'espacio_id' in data:
+            h.espacio = EspacioFisico.objects.get(id=data.get('espacio_id'))
+        if 'dia_semana' in data:
+            h.dia_semana = data.get('dia_semana')
+        if 'hora_inicio' in data:
+            h.hora_inicio = datetime.time.fromisoformat(data.get('hora_inicio'))
+        if 'hora_fin' in data:
+            h.hora_fin = datetime.time.fromisoformat(data.get('hora_fin'))
+        if 'cantidad_estudiantes' in data:
+            h.cantidad_estudiantes = int(data.get('cantidad_estudiantes')) if data.get('cantidad_estudiantes') is not None else None
+        if 'comentario' in data:
+            h.comentario = data.get('comentario')
+        h.save()
+        return JsonResponse({"message": "Horario fusionado actualizado", "id": h.id}, status=200)
+    except HorarioFusionado.DoesNotExist:
+        return JsonResponse({"error": "Horario fusionado no encontrado."}, status=404)
+    except (Grupo.DoesNotExist, Asignatura.DoesNotExist, EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
+        return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "Formato de hora inválido o valor numérico incorrecto."}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def delete_horario_fusionado(request):
-    if request.method == 'DELETE':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            h = HorarioFusionado.objects.get(id=id)
-            h.delete()
-            return JsonResponse({"message": "Horario fusionado eliminado"}, status=200)
-        except HorarioFusionado.DoesNotExist:
-            return JsonResponse({"error": "Horario fusionado no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-
+    if request.method != 'DELETE':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        h = HorarioFusionado.objects.get(id=id)
+        h.delete()
+        return JsonResponse({"message": "Horario fusionado eliminado"}, status=200)
+    except HorarioFusionado.DoesNotExist:
+        return JsonResponse({"error": "Horario fusionado no encontrado."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
 @csrf_exempt
-def get_horario_fusionado(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            h = HorarioFusionado.objects.get(id=id)
-            return JsonResponse({
-                "id": h.id,
-                "grupo1_id": h.grupo1.id,
-                "grupo2_id": h.grupo2.id,
-                "grupo3_id": (h.grupo3.id if h.grupo3 else None),
-                "asignatura_id": h.asignatura.id,
-                "docente_id": (h.docente.id if h.docente else None),
-                "espacio_id": h.espacio.id,
-                "dia_semana": h.dia_semana,
-                "hora_inicio": str(h.hora_inicio),
-                "hora_fin": str(h.hora_fin),
-                "cantidad_estudiantes": h.cantidad_estudiantes,
-                "comentario": h.comentario
-            }, status=200)
-        except HorarioFusionado.DoesNotExist:
-            return JsonResponse({"error": "Horario fusionado no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-
+def get_horario_fusionado(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        h = HorarioFusionado.objects.get(id=id)
+        return JsonResponse({
+            "id": h.id,
+            "grupo1_id": h.grupo1.id,
+            "grupo2_id": h.grupo2.id,
+            "grupo3_id": (h.grupo3.id if h.grupo3 else None),
+            "asignatura_id": h.asignatura.id,
+            "docente_id": (h.docente.id if h.docente else None),
+            "espacio_id": h.espacio.id,
+            "dia_semana": h.dia_semana,
+            "hora_inicio": str(h.hora_inicio),
+            "hora_fin": str(h.hora_fin),
+            "cantidad_estudiantes": h.cantidad_estudiantes,
+            "comentario": h.comentario
+        }, status=200)
+    except HorarioFusionado.DoesNotExist:
+        return JsonResponse({"error": "Horario fusionado no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 def list_horarios_fusionados(request):
     if request.method == 'GET':
@@ -1249,127 +1263,121 @@ def list_horarios_fusionados(request):
         return JsonResponse({"horarios_fusionados": lst}, status=200)
 
 
-# ---------- PrestamoEspacio CRUD ----------
+# ---------- Prestamo CRUD ----------
 @csrf_exempt
 def create_prestamo(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            espacio_id = data.get('espacio_id')
-            usuario_id = data.get('usuario_id')
-            administrador_id = data.get('administrador_id')
-            fecha = data.get('fecha')
-            hora_inicio = data.get('hora_inicio')
-            hora_fin = data.get('hora_fin')
-            motivo = data.get('motivo')
-            estado = data.get('estado', 'Pendiente')
-            if not espacio_id or not fecha or not hora_inicio or not hora_fin:
-                return JsonResponse({"error": "espacio_id, fecha, hora_inicio y hora_fin son requeridos"}, status=400)
-            espacio = EspacioFisico.objects.get(id=espacio_id)
-            usuario = Usuario.objects.get(id=usuario_id) if usuario_id else None
-            administrador = Usuario.objects.get(id=administrador_id) if administrador_id else None
-            f = datetime.date.fromisoformat(fecha)
-            hi = datetime.time.fromisoformat(hora_inicio)
-            hf = datetime.time.fromisoformat(hora_fin)
-            p = PrestamoEspacio(espacio=espacio, usuario=usuario, administrador=administrador, fecha=f, hora_inicio=hi, hora_fin=hf, motivo=motivo, estado=estado)
-            p.save()
-            return JsonResponse({"message": "Prestamo creado", "id": p.id}, status=201)
-        except EspacioFisico.DoesNotExist:
-            return JsonResponse({"error": "Espacio no encontrado."}, status=404)
-        except Usuario.DoesNotExist:
-            return JsonResponse({"error": "Usuario no encontrado."}, status=404)
-        except ValueError:
-            return JsonResponse({"error": "Formato de fecha/hora inválido."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        espacio_id = data.get('espacio_id')
+        usuario_id = data.get('usuario_id')
+        administrador_id = data.get('administrador_id')
+        fecha = data.get('fecha')
+        hora_inicio = data.get('hora_inicio')
+        hora_fin = data.get('hora_fin')
+        motivo = data.get('motivo')
+        estado = data.get('estado', 'Pendiente')
+        if not espacio_id or not fecha or not hora_inicio or not hora_fin:
+            return JsonResponse({"error": "espacio_id, fecha, hora_inicio y hora_fin son requeridos"}, status=400)
+        espacio = EspacioFisico.objects.get(id=espacio_id)
+        usuario = Usuario.objects.get(id=usuario_id) if usuario_id else None
+        administrador = Usuario.objects.get(id=administrador_id) if administrador_id else None
+        f = datetime.date.fromisoformat(fecha)
+        hi = datetime.time.fromisoformat(hora_inicio)
+        hf = datetime.time.fromisoformat(hora_fin)
+        p = PrestamoEspacio(espacio=espacio, usuario=usuario, administrador=administrador, fecha=f, hora_inicio=hi, hora_fin=hf, motivo=motivo, estado=estado)
+        p.save()
+        return JsonResponse({"message": "Prestamo creado", "id": p.id}, status=201)
+    except EspacioFisico.DoesNotExist:
+        return JsonResponse({"error": "Espacio no encontrado."}, status=404)
+    except Usuario.DoesNotExist:
+        return JsonResponse({"error": "Usuario no encontrado."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "Formato de fecha/hora inválido."}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def update_prestamo(request):
-    if request.method == 'PUT':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            p = PrestamoEspacio.objects.get(id=id)
-            if 'espacio_id' in data:
-                p.espacio = EspacioFisico.objects.get(id=data.get('espacio_id'))
-            if 'usuario_id' in data:
-                p.usuario = Usuario.objects.get(id=data.get('usuario_id')) if data.get('usuario_id') else None
-            if 'administrador_id' in data:
-                p.administrador = Usuario.objects.get(id=data.get('administrador_id')) if data.get('administrador_id') else None
-            if 'fecha' in data:
-                p.fecha = datetime.date.fromisoformat(data.get('fecha'))
-            if 'hora_inicio' in data:
-                p.hora_inicio = datetime.time.fromisoformat(data.get('hora_inicio'))
-            if 'hora_fin' in data:
-                p.hora_fin = datetime.time.fromisoformat(data.get('hora_fin'))
-            if 'motivo' in data:
-                p.motivo = data.get('motivo')
-            if 'estado' in data:
-                p.estado = data.get('estado')
-            p.save()
-            return JsonResponse({"message": "Prestamo actualizado", "id": p.id}, status=200)
-        except PrestamoEspacio.DoesNotExist:
-            return JsonResponse({"error": "Prestamo no encontrado."}, status=404)
-        except (EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
-            return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
-        except ValueError:
-            return JsonResponse({"error": "Formato de fecha/hora inválido."}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        p = PrestamoEspacio.objects.get(id=id)
+        if 'espacio_id' in data:
+            p.espacio = EspacioFisico.objects.get(id=data.get('espacio_id'))
+        if 'usuario_id' in data:
+            p.usuario = Usuario.objects.get(id=data.get('usuario_id')) if data.get('usuario_id') else None
+        if 'administrador_id' in data:
+            p.administrador = Usuario.objects.get(id=data.get('administrador_id')) if data.get('administrador_id') else None
+        if 'fecha' in data:
+            p.fecha = datetime.date.fromisoformat(data.get('fecha'))
+        if 'hora_inicio' in data:
+            p.hora_inicio = datetime.time.fromisoformat(data.get('hora_inicio'))
+        if 'hora_fin' in data:
+            p.hora_fin = datetime.time.fromisoformat(data.get('hora_fin'))
+        if 'motivo' in data:
+            p.motivo = data.get('motivo')
+        if 'estado' in data:
+            p.estado = data.get('estado')
+        p.save()
+        return JsonResponse({"message": "Prestamo actualizado", "id": p.id}, status=200)
+    except PrestamoEspacio.DoesNotExist:
+        return JsonResponse({"error": "Prestamo no encontrado."}, status=404)
+    except (EspacioFisico.DoesNotExist, Usuario.DoesNotExist):
+        return JsonResponse({"error": "Relacionada no encontrada."}, status=404)
+    except ValueError:
+        return JsonResponse({"error": "Formato de fecha/hora inválido."}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
 def delete_prestamo(request):
-    if request.method == 'DELETE':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            p = PrestamoEspacio.objects.get(id=id)
-            p.delete()
-            return JsonResponse({"message": "Prestamo eliminado"}, status=200)
-        except PrestamoEspacio.DoesNotExist:
-            return JsonResponse({"error": "Prestamo no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-
-@csrf_exempt
-def get_prestamo(request):
-    if request.method == 'GET':
-        try:
-            data = json.loads(request.body or '{}')
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "ID es requerido"}, status=400)
-            p = PrestamoEspacio.objects.get(id=id)
-            return JsonResponse({
-                "id": p.id,
-                "espacio_id": p.espacio.id,
-                "usuario_id": (p.usuario.id if p.usuario else None),
-                "administrador_id": (p.administrador.id if p.administrador else None),
-                "fecha": str(p.fecha),
-                "hora_inicio": str(p.hora_inicio),
-                "hora_fin": str(p.hora_fin),
-                "motivo": p.motivo,
-                "estado": p.estado
-            }, status=200)
-        except PrestamoEspacio.DoesNotExist:
-            return JsonResponse({"error": "Prestamo no encontrado."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "JSON inválido."}, status=400)
-
-
+    if request.method != 'DELETE':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        id = data.get('id')
+        if not id:
+            return JsonResponse({"error": "ID es requerido"}, status=400)
+        p = PrestamoEspacio.objects.get(id=id)
+        p.delete()
+        return JsonResponse({"message": "Prestamo eliminado"}, status=200)
+    except PrestamoEspacio.DoesNotExist:
+        return JsonResponse({"error": "Prestamo no encontrado."}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+def get_prestamo(request, id=None):
+    if id is None:
+        return JsonResponse({"error": "El ID es requerido en la URL"}, status=400)
+    try:
+        p = PrestamoEspacio.objects.get(id=id)
+        return JsonResponse({
+            "id": p.id,
+            "espacio_id": p.espacio.id,
+            "usuario_id": (p.usuario.id if p.usuario else None),
+            "administrador_id": (p.administrador.id if p.administrador else None),
+            "fecha": str(p.fecha),
+            "hora_inicio": str(p.hora_inicio),
+            "hora_fin": str(p.hora_fin),
+            "motivo": p.motivo,
+            "estado": p.estado
+        }, status=200)
+    except PrestamoEspacio.DoesNotExist:
+        return JsonResponse({"error": "Prestamo no encontrado."}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+    
 def list_prestamos(request):
     if request.method == 'GET':
         items = PrestamoEspacio.objects.all()
@@ -1388,62 +1396,47 @@ def list_prestamos(request):
 
 
 @csrf_exempt
-def update_rol(request):
-    if request.method == 'PUT':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            nombre = data.get('nombre')
-            descripcion = data.get('descripcion')
-            if not id or not nombre or not descripcion:
-                return JsonResponse({"error": "ID, nombre y descripción son requeridos"}, status=400)
-            rol_existente = Rol.objects.get(id=id)
-            rol_existente.nombre = nombre
-            rol_existente.descripcion = descripcion
-            rol_existente.save()
-            return JsonResponse({"message": "Rol actualizado", "id": rol_existente.id}, status=200)
-        
-        except Rol.DoesNotExist:
-            return JsonResponse({"error": "El rol con el ID proporcionado no existe."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "El cuerpo de la solicitud no es un JSON válido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-@csrf_exempt
-def delete_rol(request):
-    if request.method == 'DELETE':
-        try:
-            data = json.loads(request.body)
-            id = data.get('id')
-            if not id:
-                return JsonResponse({"error": "El ID es requerido"}, status=400)
-            rol_existente = Rol.objects.get(id=id)
-            rol_existente.delete()
-            return JsonResponse({"message": "Rol eliminado"}, status=200)
-        except Rol.DoesNotExist:
-            return JsonResponse({"error": "El rol con el ID proporcionado no existe."}, status=404)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "El cuerpo de la solicitud no es un JSON válido."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-@csrf_exempt
-def get_rol(request):
-    if request.method == 'GET':
+def login(request):
+    """
+    POST JSON: { "correo": "...", "contrasena": "..." }
+    Si las credenciales son correctas, se guarda user_id en la sesión.
+    """
+    if request.method != 'POST':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
         data = json.loads(request.body)
-        id = data.get('id')
-        if not id:
-            return JsonResponse({"error": "El ID es requerido"}, status=400)
+        correo = data.get('correo')
+        contrasena = data.get('contrasena')
+        if not correo or not contrasena:
+            return JsonResponse({"error": "correo y contrasena son requeridos"}, status=400)
         try:
-            rol_existente = Rol.objects.get(id=id)
-            return JsonResponse({"id": rol_existente.id, "nombre": rol_existente.nombre, "descripcion": rol_existente.descripcion}, status=200)
-        except Rol.DoesNotExist:
-            return JsonResponse({"error": "El rol con el ID proporcionado no existe."}, status=404)
+            u = Usuario.objects.get(correo=correo)
+        except Usuario.DoesNotExist:
+            return JsonResponse({"error": "Credenciales inválidas"}, status=401)
+        # Nota: aquí se compara directamente con contrasena_hash. Si usas hash real,
+        # reemplaza la comparación por la verificación correspondiente.
+        if u.contrasena_hash != contrasena:
+            return JsonResponse({"error": "Credenciales inválidas"}, status=401)
+        # Guardar datos mínimos en sesión
+        request.session['user_id'] = u.id
+        request.session['correo'] = u.correo
+        request.session['is_authenticated'] = True
+        return JsonResponse({"message": "Login exitoso", "id": u.id, "nombre": u.nombre}, status=200)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 @csrf_exempt
-def list_roles(request):
-    if request.method == 'GET':
-        roles = Rol.objects.all()
-        roles_list = [{"id": rol.id, "nombre": rol.nombre, "descripcion": rol.descripcion} for rol in roles]
-        return JsonResponse({"roles": roles_list}, status=200)
+def logout(request):
+    """
+    POST o GET para cerrar sesión: limpia la sesión del usuario.
+    """
+    if request.method not in ('POST', 'GET'):
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        request.session.flush()
+        return JsonResponse({"message": "Logout exitoso"}, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
