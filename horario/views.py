@@ -1440,3 +1440,31 @@ def logout(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+@csrf_exempt
+def change_password(request):
+    """
+    POST JSON: { "correo": "...", "old_contrasena": "...", "new_contrasena": "..." }
+    Cambia la contraseña si las credenciales son correctas.
+    """
+    if request.method != 'PUT':
+        return JsonResponse({"error": "Método no permitido"}, status=405)
+    try:
+        data = json.loads(request.body)
+        correo = data.get('correo')
+        old_contrasena = data.get('old_contrasena')
+        new_contrasena = data.get('new_contrasena')
+        if not correo or not old_contrasena or not new_contrasena:
+            return JsonResponse({"error": "correo, old_contrasena y new_contrasena son requeridos"}, status=400)
+        try:
+            u = Usuario.objects.get(correo=correo)
+        except Usuario.DoesNotExist:
+            return JsonResponse({"error": "Credenciales inválidas"}, status=401)
+        if u.contrasena_hash != old_contrasena:
+            return JsonResponse({"error": "Credenciales inválidas"}, status=401)
+        u.contrasena_hash = new_contrasena
+        u.save()
+        return JsonResponse({"message": "Contraseña cambiada exitosamente"}, status=200)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

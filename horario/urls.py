@@ -3,10 +3,13 @@ from . import views
 
 urlpatterns = [
     path('', views.crud, name='crud'),
-
-    # Rol
+    
+    # Authentication
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
+    path('change_password/', views.change_password, name='change_password'),
+
+    # Rol
     path('create_rol/', views.create_rol, name='create_rol'),
     path('update_rol/', views.update_rol, name='update_rol'),
     path('delete_rol/', views.delete_rol, name='delete_rol'),
