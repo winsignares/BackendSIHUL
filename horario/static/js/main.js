@@ -2,7 +2,7 @@
 
 // ========== Rol API ==========
 async function createRol(nombre, descripcion) {
-  const response = await fetch(`${API_BASE_URL}/usuarios/`, {
+  const response = await fetch(`${API_BASE_URL}/usuarios/roles/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nombre, descripcion })
@@ -11,7 +11,7 @@ async function createRol(nombre, descripcion) {
 }
 
 async function updateRol(id, nombre, descripcion) {
-  const response = await fetch(`${API_BASE_URL}/usuarios/update/`, {
+  const response = await fetch(`${API_BASE_URL}/usuarios/roles/update/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id, nombre, descripcion })
@@ -20,7 +20,7 @@ async function updateRol(id, nombre, descripcion) {
 }
 
 async function deleteRol(id) {
-  const response = await fetch(`${API_BASE_URL}/usuarios/delete/`, {
+  const response = await fetch(`${API_BASE_URL}/usuarios/roles/delete/`, {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id })
@@ -29,7 +29,7 @@ async function deleteRol(id) {
 }
 
 async function getRol(id) {
-  const response = await fetch(`${API_BASE_URL}/usuarios/${id}/`, { method: 'GET' });
+  const response = await fetch(`${API_BASE_URL}/usuarios/roles/${id}/`, { method: 'GET' });
   return response.json();
 }
 
