@@ -1,534 +1,556 @@
-const API_BASE_URL = 'http://localhost:8000/horario';
+﻿const API_BASE_URL = 'http://localhost:8000';
 
 // ========== Rol API ==========
-const RolAPI = {
-  create: async (nombre, descripcion) => {
-    const response = await fetch(`${API_BASE_URL}/roles/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, descripcion })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, descripcion) => {
-    const response = await fetch(`${API_BASE_URL}/roles/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, descripcion })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/roles/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/roles/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/roles/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function createRol(nombre, descripcion) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, descripcion })
+  });
+  return response.json();
+}
 
-// ========== Sede API ==========
-const SedeAPI = {
-  create: async (nombre, direccion, ciudad, activa = true) => {
-    const response = await fetch(`${API_BASE_URL}/sedes/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, direccion, ciudad, activa })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, direccion, ciudad, activa) => {
-    const response = await fetch(`${API_BASE_URL}/sedes/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, direccion, ciudad, activa })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/sedes/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/sedes/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/sedes/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function updateRol(id, nombre, descripcion) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, descripcion })
+  });
+  return response.json();
+}
 
-// ========== Facultad API ==========
-const FacultadAPI = {
-  create: async (nombre, activa = true) => {
-    const response = await fetch(`${API_BASE_URL}/facultades/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, activa })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, activa) => {
-    const response = await fetch(`${API_BASE_URL}/facultades/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, activa })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/facultades/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/facultades/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/facultades/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function deleteRol(id) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
 
-// ========== Programa API ==========
-const ProgramaAPI = {
-  create: async (nombre, facultad_id, activo = true) => {
-    const response = await fetch(`${API_BASE_URL}/programas/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, facultad_id, activo })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, facultad_id, activo) => {
-    const response = await fetch(`${API_BASE_URL}/programas/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, facultad_id, activo })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/programas/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/programas/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/programas/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function getRol(id) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/${id}/`, { method: 'GET' });
+  return response.json();
+}
 
-// ========== PeriodoAcademico API ==========
-const PeriodoAPI = {
-  create: async (nombre, fecha_inicio, fecha_fin, activo = true) => {
-    const response = await fetch(`${API_BASE_URL}/periodos/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, fecha_inicio, fecha_fin, activo })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, fecha_inicio, fecha_fin, activo) => {
-    const response = await fetch(`${API_BASE_URL}/periodos/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, fecha_inicio, fecha_fin, activo })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/periodos/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/periodos/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/periodos/`, { method: 'GET' });
-    return response.json();
-  }
-};
-
-// ========== Grupo API ==========
-const GrupoAPI = {
-  create: async (nombre, programa_id, periodo_id, semestre, activo = true) => {
-    const response = await fetch(`${API_BASE_URL}/grupos/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, programa_id, periodo_id, semestre, activo })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, programa_id, periodo_id, semestre, activo) => {
-    const response = await fetch(`${API_BASE_URL}/grupos/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, programa_id, periodo_id, semestre, activo })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/grupos/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/grupos/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/grupos/`, { method: 'GET' });
-    return response.json();
-  }
-};
-
-// ========== Asignatura API ==========
-const AsignaturaAPI = {
-  create: async (nombre, codigo, creditos) => {
-    const response = await fetch(`${API_BASE_URL}/asignaturas/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, codigo, creditos })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, codigo, creditos) => {
-    const response = await fetch(`${API_BASE_URL}/asignaturas/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, codigo, creditos })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/asignaturas/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/asignaturas/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/asignaturas/`, { method: 'GET' });
-    return response.json();
-  }
-};
-
-// ========== EspacioFisico API ==========
-const EspacioAPI = {
-  create: async (sede_id, tipo, capacidad, ubicacion, recursos, disponible = true) => {
-    const response = await fetch(`${API_BASE_URL}/espacios/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sede_id, tipo, capacidad, ubicacion, recursos, disponible })
-    });
-    return response.json();
-  },
-  update: async (id, sede_id, tipo, capacidad, ubicacion, recursos, disponible) => {
-    const response = await fetch(`${API_BASE_URL}/espacios/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, sede_id, tipo, capacidad, ubicacion, recursos, disponible })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/espacios/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/espacios/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/espacios/`, { method: 'GET' });
-    return response.json();
-  }
-};
-
-// ========== Recurso API ==========
-const RecursoAPI = {
-  create: async (nombre, descripcion) => {
-    const response = await fetch(`${API_BASE_URL}/recursos/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, descripcion })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, descripcion) => {
-    const response = await fetch(`${API_BASE_URL}/recursos/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, descripcion })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/recursos/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/recursos/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/recursos/`, { method: 'GET' });
-    return response.json();
-  }
-};
-
-// ========== EspacioRecurso API ==========
-const EspacioRecursoAPI = {
-  create: async (espacio_id, recurso_id, disponible = true) => {
-    const response = await fetch(`${API_BASE_URL}/espacio-recursos/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ espacio_id, recurso_id, disponible })
-    });
-    return response.json();
-  },
-  update: async (espacio_id, recurso_id, disponible) => {
-    const response = await fetch(`${API_BASE_URL}/espacio-recursos/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ espacio_id, recurso_id, disponible })
-    });
-    return response.json();
-  },
-  delete: async (espacio_id, recurso_id) => {
-    const response = await fetch(`${API_BASE_URL}/espacio-recursos/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ espacio_id, recurso_id })
-    });
-    return response.json();
-  },
-  getById: async (espacio_id, recurso_id) => {
-    const response = await fetch(`${API_BASE_URL}/espacio-recursos/${espacio_id}/${recurso_id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/espacio-recursos/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function listRoles() {
+  const response = await fetch(`${API_BASE_URL}/usuarios/list/`, { method: 'GET' });
+  return response.json();
+}
 
 // ========== Usuario API ==========
-const UsuarioAPI = {
-  create: async (nombre, correo, contrasena, rol_id, activo = true) => {
-    const response = await fetch(`${API_BASE_URL}/usuarios/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, correo, contrasena, rol_id, activo })
-    });
-    return response.json();
-  },
-  update: async (id, nombre, correo, contrasena, rol_id, activo) => {
-    const response = await fetch(`${API_BASE_URL}/usuarios/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, nombre, correo, contrasena, rol_id, activo })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/usuarios/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/usuarios/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/usuarios/`, { method: 'GET' });
-    return response.json();
-  },
-  login: async (correo, contrasena) => {
-    const response = await fetch(`${API_BASE_URL}/login/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ correo, contrasena })
-    });
-    return response.json();
-  },
-  logout: async () => {
-    const response = await fetch(`${API_BASE_URL}/logout/`, { method: 'POST' });
-    return response.json();
-  },
-  changePassword: async (correo, old_contrasena, new_contrasena) => {
-    const response = await fetch(`${API_BASE_URL}/change-password/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ correo, old_contrasena, new_contrasena })
-    });
-    return response.json();
-  }
-};
+async function createUsuario(nombre, correo, contrasena, rol_id, activo = true) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, correo, contrasena, rol_id, activo })
+  });
+  return response.json();
+}
+
+async function updateUsuario(id, nombre, correo, contrasena, rol_id, activo) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, correo, contrasena, rol_id, activo })
+  });
+  return response.json();
+}
+
+async function deleteUsuario(id) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getUsuario(id) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listUsuarios() {
+  const response = await fetch(`${API_BASE_URL}/usuarios/list/`, { method: 'GET' });
+  return response.json();
+}
+
+async function login(correo, contrasena) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/login/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ correo, contrasena })
+  });
+  return response.json();
+}
+
+async function logout() {
+  const response = await fetch(`${API_BASE_URL}/usuarios/logout/`, { method: 'POST' });
+  return response.json();
+}
+
+async function changePassword(correo, old_contrasena, new_contrasena) {
+  const response = await fetch(`${API_BASE_URL}/usuarios/change_password/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ correo, old_contrasena, new_contrasena })
+  });
+  return response.json();
+}
+
+// ========== Sede API ==========
+async function createSede(nombre, direccion, ciudad, activa = true) {
+  const response = await fetch(`${API_BASE_URL}/sedes/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, direccion, ciudad, activa })
+  });
+  return response.json();
+}
+
+async function updateSede(id, nombre, direccion, ciudad, activa) {
+  const response = await fetch(`${API_BASE_URL}/sedes/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, direccion, ciudad, activa })
+  });
+  return response.json();
+}
+
+async function deleteSede(id) {
+  const response = await fetch(`${API_BASE_URL}/sedes/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getSede(id) {
+  const response = await fetch(`${API_BASE_URL}/sedes/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listSedes() {
+  const response = await fetch(`${API_BASE_URL}/sedes/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Facultad API ==========
+async function createFacultad(nombre, activa = true) {
+  const response = await fetch(`${API_BASE_URL}/facultades/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, activa })
+  });
+  return response.json();
+}
+
+async function updateFacultad(id, nombre, activa) {
+  const response = await fetch(`${API_BASE_URL}/facultades/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, activa })
+  });
+  return response.json();
+}
+
+async function deleteFacultad(id) {
+  const response = await fetch(`${API_BASE_URL}/facultades/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getFacultad(id) {
+  const response = await fetch(`${API_BASE_URL}/facultades/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listFacultades() {
+  const response = await fetch(`${API_BASE_URL}/facultades/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Programa API ==========
+async function createPrograma(nombre, facultad_id, activo = true) {
+  const response = await fetch(`${API_BASE_URL}/programas/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, facultad_id, activo })
+  });
+  return response.json();
+}
+
+async function updatePrograma(id, nombre, facultad_id, activo) {
+  const response = await fetch(`${API_BASE_URL}/programas/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, facultad_id, activo })
+  });
+  return response.json();
+}
+
+async function deletePrograma(id) {
+  const response = await fetch(`${API_BASE_URL}/programas/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getPrograma(id) {
+  const response = await fetch(`${API_BASE_URL}/programas/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listProgramas() {
+  const response = await fetch(`${API_BASE_URL}/programas/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Periodo API ==========
+async function createPeriodo(nombre, fecha_inicio, fecha_fin, activo = true) {
+  const response = await fetch(`${API_BASE_URL}/periodos/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, fecha_inicio, fecha_fin, activo })
+  });
+  return response.json();
+}
+
+async function updatePeriodo(id, nombre, fecha_inicio, fecha_fin, activo) {
+  const response = await fetch(`${API_BASE_URL}/periodos/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, fecha_inicio, fecha_fin, activo })
+  });
+  return response.json();
+}
+
+async function deletePeriodo(id) {
+  const response = await fetch(`${API_BASE_URL}/periodos/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getPeriodo(id) {
+  const response = await fetch(`${API_BASE_URL}/periodos/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listPeriodos() {
+  const response = await fetch(`${API_BASE_URL}/periodos/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Grupo API ==========
+async function createGrupo(nombre, programa_id, periodo_id, semestre, activo = true) {
+  const response = await fetch(`${API_BASE_URL}/grupos/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, programa_id, periodo_id, semestre, activo })
+  });
+  return response.json();
+}
+
+async function updateGrupo(id, nombre, programa_id, periodo_id, semestre, activo) {
+  const response = await fetch(`${API_BASE_URL}/grupos/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, programa_id, periodo_id, semestre, activo })
+  });
+  return response.json();
+}
+
+async function deleteGrupo(id) {
+  const response = await fetch(`${API_BASE_URL}/grupos/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getGrupo(id) {
+  const response = await fetch(`${API_BASE_URL}/grupos/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listGrupos() {
+  const response = await fetch(`${API_BASE_URL}/grupos/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Asignatura API ==========
+async function createAsignatura(nombre, codigo, creditos) {
+  const response = await fetch(`${API_BASE_URL}/asignaturas/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, codigo, creditos })
+  });
+  return response.json();
+}
+
+async function updateAsignatura(id, nombre, codigo, creditos) {
+  const response = await fetch(`${API_BASE_URL}/asignaturas/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, codigo, creditos })
+  });
+  return response.json();
+}
+
+async function deleteAsignatura(id) {
+  const response = await fetch(`${API_BASE_URL}/asignaturas/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getAsignatura(id) {
+  const response = await fetch(`${API_BASE_URL}/asignaturas/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listAsignaturas() {
+  const response = await fetch(`${API_BASE_URL}/asignaturas/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Espacio API ==========
+async function createEspacio(sede_id, tipo, capacidad, ubicacion, recursos, disponible = true) {
+  const response = await fetch(`${API_BASE_URL}/espacios/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sede_id, tipo, capacidad, ubicacion, recursos, disponible })
+  });
+  return response.json();
+}
+
+async function updateEspacio(id, sede_id, tipo, capacidad, ubicacion, recursos, disponible) {
+  const response = await fetch(`${API_BASE_URL}/espacios/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, sede_id, tipo, capacidad, ubicacion, recursos, disponible })
+  });
+  return response.json();
+}
+
+async function deleteEspacio(id) {
+  const response = await fetch(`${API_BASE_URL}/espacios/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getEspacio(id) {
+  const response = await fetch(`${API_BASE_URL}/espacios/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listEspacios() {
+  const response = await fetch(`${API_BASE_URL}/espacios/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Recurso API ==========
+async function createRecurso(nombre, descripcion) {
+  const response = await fetch(`${API_BASE_URL}/recursos/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, descripcion })
+  });
+  return response.json();
+}
+
+async function updateRecurso(id, nombre, descripcion) {
+  const response = await fetch(`${API_BASE_URL}/recursos/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, nombre, descripcion })
+  });
+  return response.json();
+}
+
+async function deleteRecurso(id) {
+  const response = await fetch(`${API_BASE_URL}/recursos/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getRecurso(id) {
+  const response = await fetch(`${API_BASE_URL}/recursos/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listRecursos() {
+  const response = await fetch(`${API_BASE_URL}/recursos/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== EspacioRecurso API ==========
+async function createEspacioRecurso(espacio_id, recurso_id, disponible = true) {
+  const response = await fetch(`${API_BASE_URL}/recursos/espacio_recurso/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ espacio_id, recurso_id, disponible })
+  });
+  return response.json();
+}
+
+async function updateEspacioRecurso(espacio_id, recurso_id, disponible) {
+  const response = await fetch(`${API_BASE_URL}/recursos/espacio_recurso/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ espacio_id, recurso_id, disponible })
+  });
+  return response.json();
+}
+
+async function deleteEspacioRecurso(espacio_id, recurso_id) {
+  const response = await fetch(`${API_BASE_URL}/recursos/espacio_recurso/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ espacio_id, recurso_id })
+  });
+  return response.json();
+}
+
+async function getEspacioRecurso(espacio_id, recurso_id) {
+  const response = await fetch(`${API_BASE_URL}/recursos/espacio_recurso/${espacio_id}/${recurso_id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listEspacioRecursos() {
+  const response = await fetch(`${API_BASE_URL}/recursos/espacio_recurso/list/`, { method: 'GET' });
+  return response.json();
+}
 
 // ========== Horario API ==========
-const HorarioAPI = {
-  create: async (grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes) => {
-    const response = await fetch(`${API_BASE_URL}/horarios/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes })
-    });
-    return response.json();
-  },
-  update: async (id, grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes) => {
-    const response = await fetch(`${API_BASE_URL}/horarios/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/horarios/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/horarios/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/horarios/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function createHorario(grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes) {
+  const response = await fetch(`${API_BASE_URL}/horario/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes })
+  });
+  return response.json();
+}
+
+async function updateHorario(id, grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes) {
+  const response = await fetch(`${API_BASE_URL}/horario/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, grupo_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes })
+  });
+  return response.json();
+}
+
+async function deleteHorario(id) {
+  const response = await fetch(`${API_BASE_URL}/horario/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getHorario(id) {
+  const response = await fetch(`${API_BASE_URL}/horario/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listHorarios() {
+  const response = await fetch(`${API_BASE_URL}/horario/list/`, { method: 'GET' });
+  return response.json();
+}
 
 // ========== HorarioFusionado API ==========
-const HorarioFusionadoAPI = {
-  create: async (grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario) => {
-    const response = await fetch(`${API_BASE_URL}/horarios-fusionados/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario })
-    });
-    return response.json();
-  },
-  update: async (id, grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario) => {
-    const response = await fetch(`${API_BASE_URL}/horarios-fusionados/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/horarios-fusionados/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/horarios-fusionados/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/horarios-fusionados/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function createHorarioFusionado(grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario) {
+  const response = await fetch(`${API_BASE_URL}/horario/horario_fusionado/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario })
+  });
+  return response.json();
+}
 
-// ========== PrestamoEspacio API ==========
-const PrestamoAPI = {
-  create: async (espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado = 'Pendiente') => {
-    const response = await fetch(`${API_BASE_URL}/prestamos/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado })
-    });
-    return response.json();
-  },
-  update: async (id, espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado) => {
-    const response = await fetch(`${API_BASE_URL}/prestamos/`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado })
-    });
-    return response.json();
-  },
-  delete: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/prestamos/`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
-    return response.json();
-  },
-  getById: async (id) => {
-    const response = await fetch(`${API_BASE_URL}/prestamos/${id}/`, { method: 'GET' });
-    return response.json();
-  },
-  list: async () => {
-    const response = await fetch(`${API_BASE_URL}/prestamos/`, { method: 'GET' });
-    return response.json();
-  }
-};
+async function updateHorarioFusionado(id, grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario) {
+  const response = await fetch(`${API_BASE_URL}/horario/horario_fusionado/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, grupo1_id, grupo2_id, grupo3_id, asignatura_id, espacio_id, dia_semana, hora_inicio, hora_fin, docente_id, cantidad_estudiantes, comentario })
+  });
+  return response.json();
+}
 
-// Export APIs for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    RolAPI, SedeAPI, FacultadAPI, ProgramaAPI, PeriodoAPI, GrupoAPI,
-    AsignaturaAPI, EspacioAPI, RecursoAPI, EspacioRecursoAPI, UsuarioAPI,
-    HorarioAPI, HorarioFusionadoAPI, PrestamoAPI
-  };
+async function deleteHorarioFusionado(id) {
+  const response = await fetch(`${API_BASE_URL}/horario/horario_fusionado/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getHorarioFusionado(id) {
+  const response = await fetch(`${API_BASE_URL}/horario/horario_fusionado/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listHorariosFusionados() {
+  const response = await fetch(`${API_BASE_URL}/horario/horario_fusionado/list/`, { method: 'GET' });
+  return response.json();
+}
+
+// ========== Prestamo API ==========
+async function createPrestamo(espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado = 'Pendiente') {
+  const response = await fetch(`${API_BASE_URL}/prestamos/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado })
+  });
+  return response.json();
+}
+
+async function updatePrestamo(id, espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado) {
+  const response = await fetch(`${API_BASE_URL}/prestamos/update/`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, espacio_id, usuario_id, administrador_id, fecha, hora_inicio, hora_fin, motivo, estado })
+  });
+  return response.json();
+}
+
+async function deletePrestamo(id) {
+  const response = await fetch(`${API_BASE_URL}/prestamos/delete/`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id })
+  });
+  return response.json();
+}
+
+async function getPrestamo(id) {
+  const response = await fetch(`${API_BASE_URL}/prestamos/${id}/`, { method: 'GET' });
+  return response.json();
+}
+
+async function listPrestamos() {
+  const response = await fetch(`${API_BASE_URL}/prestamos/list/`, { method: 'GET' });
+  return response.json();
 }
