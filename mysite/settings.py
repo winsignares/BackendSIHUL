@@ -32,6 +32,16 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'horario',
+    'usuarios',
+    'sedes',
+    'facultades',
+    'programas',
+    'periodos',
+    'grupos',
+    'asignaturas',
+    'espacios',
+    'recursos',
+    'prestamos',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
