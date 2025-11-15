@@ -14,7 +14,7 @@ services:
     environment:
       - DB_HOST=db
       - DB_PORT=5432
-      - DB_USER=admin
+      - DB_USER=postgres
       - DB_PASSWORD=mysecretpassword
       - DB_NAME=mypostgresdb
 
@@ -25,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: admin
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mysecretpassword
       POSTGRES_DB: mypostgresdb
     volumes:
